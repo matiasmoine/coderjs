@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const ingresoInput = document.getElementById("ingreso");
   const guardarIngresoBtn = document.getElementById("guardarIngreso");
@@ -7,6 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const gastosTable = document.getElementById("gastosTable");
   const borrarTodoBtn = document.getElementById("borrarTodo");
   const categoriaFiltro = document.getElementById("categoriaFiltro");
+  const advertenciaDiv = document.getElementById("advertencia");
+
+  document.getElementById("limpiarPantalla").addEventListener("click", () => {
+    localStorage.clear();
+    location.reload();
+  });
+
 
   let ingresos = parseFloat(localStorage.getItem("ingreso")) || 0;
   let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
@@ -18,14 +24,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("ingresosTotal").textContent = ingresos.toFixed(2);
     document.getElementById("gastosTotal").textContent = totalGastos.toFixed(2);
-    document.getElementById("saldoTotal").textContent = saldo.toFixed(2);
+
+    const saldoElemento = document.getElementById("saldoTotal");
+    saldoElemento.textContent = saldo.toFixed(2);
+
+    console.log(saldoElemento.textContent);
+
+    // Aplicar estilo y advertencia si el saldo es negativo
+    if (saldo < 0) {
+      saldoElemento.classList.add("saldo-negativo");
+      advertenciaDiv.textContent = "⚠️ ¡Advertencia! Sus gastos superaron sus ingresos.";
+    } else {
+      saldoElemento.classList.remove("saldo-negativo");
+      advertenciaDiv.textContent = "";
+    }
+
     document.getElementById("porcentajeGastado").textContent = porcentaje + "%";
   }
 
   function renderGastos(filtro = "Todas") {
     gastosTable.innerHTML = "";
     const filtrados = filtro === "Todas" ? gastos : gastos.filter(g => g.categoria === filtro);
-
     filtrados.forEach((gasto, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -39,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  window.eliminarGasto = function(index) {
+  window.eliminarGasto = function (index) {
     gastos.splice(index, 1);
     localStorage.setItem("gastos", JSON.stringify(gastos));
     renderGastos(categoriaFiltro.value);

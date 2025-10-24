@@ -1,16 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Simulador de Presupuesto</title>
   <style>
-    body { font-family: Arial; margin: 20px; }
-    table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 8px; }
-    th { background-color: #f0f0f0; }
-    input, select, button { margin: 5px; }   
-  </style> 
-  <link rel="stylesheet" href="./css/style.css">
+    body {
+      font-family: Arial;
+      margin: 20px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ccc;
+      border-collapse: collapse;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    input,
+    select,
+    button {
+      margin: 5px;
+    }
+  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <h1>Controla tus ingresos y gastos por categoría</h1>
   <p>El ingreso se guarda automáticamente en tu navegador.</p>
@@ -26,6 +46,7 @@
     <input type="text" id="nombre" placeholder="Nombre del gasto" required>
     <input type="number" id="monto" placeholder="Monto" required>
     <select id="categoria" required>
+      <option value="Alojamiento">Alojamiento</option>
       <option value="Alimentación">Alimentación</option>
       <option value="Transporte">Transporte</option>
       <option value="Servicios">Servicios</option>
@@ -41,11 +62,15 @@
   <p>Gastos: $<span id="gastosTotal">0</span></p>
   <p>Saldo: $<span id="saldoTotal">0</span></p>
   <p>Porcentaje gastado: <span id="porcentajeGastado">0%</span></p>
+  <!-- Advertencia de saldo negativo -->
+  <div id="advertencia" class="advertencia"></div>
+
 
   <h2>Gastos</h2>
   <label>Filtrar por categoría:
     <select id="categoriaFiltro">
       <option value="Todas">Todas</option>
+      <option value="Alojamiento">Alojamiento</option>
       <option value="Alimentación">Alimentación</option>
       <option value="Transporte">Transporte</option>
       <option value="Servicios">Servicios</option>
@@ -66,6 +91,8 @@
     </thead>
     <tbody id="gastosTable"></tbody>
   </table>
+  <button id="limpiarPantalla">Limpiar pantalla y datos</button>
   <script src="main.js"></script>
 </body>
+
 </html>
