@@ -108,7 +108,7 @@ function calcularTotalesPorCategoria() {
   }
 }
 
-// Función principal que se ejecuta al presionar el botón
+// Función principal que se ejecuta al hacer click el botón
 function iniciarSimulador() {
   console.clear();
   ingresarIngresos();
