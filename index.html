@@ -1,19 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Presupuesto con Categorías</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Presupuesto 💰</title>
+  <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
-    <h1>Simulador de Presupuesto</h1>
-  <p>
-    Este simulador permite al usuario ingresar sus ingresos mensuales, registrar gasto y luego clasificarlo
-    en categorías como vivienda, comida, transporte y ocio. Los gastos se almacenan en arrays separados
-    y se calcula el saldo disponible. 
-  </p>
-  <button id="comenzarBtn">Comenzar</button>
-  <script src="./main.js" defer></script>
+  <header>
+    <h1>Simulador de Presupuesto 💰</h1>
+    <p>Gestioná tus ingresos y gastos de forma simple y visual.</p>
+  </header>
 
+  <main>
+    <section id="ingresos" class="card">
+      <h2>Ingresos Mensuales</h2>
+      <div class="input-group">
+        <input type="number" id="ingreso" placeholder="Ej: 500000" />
+        <button id="guardarIngreso">Guardar ingreso</button>
+      </div>
+    </section>
+
+    <section id="formGasto" class="card oculto">
+      <h2>Registrar Gasto</h2>
+      <div class="form-grid">
+        <input type="text" id="nombreGasto" placeholder="Nombre del gasto" />
+        <input type="number" id="montoGasto" placeholder="Monto" />
+        <select id="categoriaGasto">
+          <option value="vivienda">🏠 Vivienda</option>
+          <option value="comida">🍽️ Comida</option>
+          <option value="transporte">🚗 Transporte</option>
+          <option value="ocio">🎉 Ocio</option>
+        </select>
+        <button id="agregarGasto">Agregar</button>
+      </div>
+    </section>
+
+    <!-- 🆕 Resumen Financiero en Flex de 4 columnas -->
+    <section id="resumen" class="card oculto">
+      <h2>Resumen Financiero</h2>
+      <div id="resumenFlex">
+        <div class="columna" id="col-vivienda">
+          <h3>🏠 Vivienda</h3>
+          <div class="listaCategoria"></div>
+          <p class="totalCategoria"></p>
+        </div>
+        <div class="columna" id="col-comida">
+          <h3>🍽️ Comida</h3>
+          <div class="listaCategoria"></div>
+          <p class="totalCategoria"></p>
+        </div>
+        <div class="columna" id="col-transporte">
+          <h3>🚗 Transporte</h3>
+          <div class="listaCategoria"></div>
+          <p class="totalCategoria"></p>
+        </div>
+        <div class="columna" id="col-ocio">
+          <h3>🎉 Ocio</h3>
+          <div class="listaCategoria"></div>
+          <p class="totalCategoria"></p>
+        </div>
+      </div>
+      <p id="totales"></p>
+      <div class="acciones">
+        <button id="limpiarTodo">🗑️ Limpiar todo y reiniciar</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>💼 Creado por Matías | Proyecto educativo Frontend</p>
+  </footer>
+
+  <script src="main.js" defer></script>
 </body>
 </html>

@@ -1,123 +1,204 @@
-// Espera a que el DOM esté listo y luego conecta el botón
-document.addEventListener("DOMContentLoaded", function () {
-  const comenzarBtn = document.getElementById("comenzarBtn");
-  comenzarBtn.addEventListener("click", iniciarSimulador);
-});
+document.addEventListener("DOMContentLoaded", () => {
+  const ingresoInput = document.getElementById("ingreso");
+  const guardarIngresoBtn = document.getElementById("guardarIngreso");
+  const formGasto = document.getElementById("formGasto");
+  const agregarGastoBtn = document.getElementById("agregarGasto");
+  const nombreGasto = document.getElementById("nombreGasto");
+  const montoGasto = document.getElementById("montoGasto");
+  const categoriaGasto = document.getElementById("categoriaGasto");
+  const listaGastosFallback = document.getElementById("listaGastos"); // fallback único (opcional)
+  const resumen = document.getElementById("resumen");
+  const totales = document.getElementById("totales");
 
-// Variables globales
-let ingresosMensuales = 0;
+  let ingresos = JSON.parse(localStorage.getItem("ingresos")) || 0;
+  let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
 
-// Arrays por categoría
-const vivienda = [];
-const comida = [];
-const transporte = [];
-const ocio = [];
+  // Mostrar ingreso guardado y secciones si corresponde
+  if (ingresos > 0) {
+    ingresoInput.value = ingresos;
+    formGasto?.classList.remove("oculto");
+    resumen?.classList.remove("oculto");
+  }
 
-// Función para pedir un número positivo
-function pedirNumeroPositivo(mensaje) {
-  let valor;
-  do {
-    valor = prompt(mensaje);
-    if (valor === null) return null;
-    valor = parseFloat(valor);
-    if (isNaN(valor) || valor < 0) {
-      alert("❌ Ingrese un número válido y no negativo.");
+  // Render inicial (robusto)
+  renderGastos();
+  actualizarTotales();
+
+  guardarIngresoBtn?.addEventListener("click", () => {
+    const valor = parseFloat(ingresoInput.value);
+    if (isNaN(valor) || valor <= 0) {
+      alert("Ingrese un valor válido para el ingreso.");
+      return;
     }
-  } while (isNaN(valor) || valor < 0);
-  return valor;
-}
+    ingresos = valor;
+    localStorage.setItem("ingresos", JSON.stringify(ingresos));
+    formGasto?.classList.remove("oculto");
+    resumen?.classList.remove("oculto");
+    actualizarTotales();
+  });
 
-// Función para ingresar ingresos
-function ingresarIngresos() {
-  const ingreso = pedirNumeroPositivo("Ingrese sus ingresos mensuales:");
-  if (ingreso !== null) {
-    ingresosMensuales = ingreso;
-    console.log("💰 Ingresos registrados: $" + ingresosMensuales);
-  } else {
-    alert("Operación cancelada. No se ingresaron ingresos.");
-  }
-}
+  agregarGastoBtn?.addEventListener("click", () => {
+    const nombre = nombreGasto.value?.trim();
+    const monto = parseFloat(montoGasto.value);
+    const categoria = categoriaGasto.value?.trim().toLowerCase();
 
-// Función para seleccionar categoría
-function seleccionarCategoria() {
-  let categoria = prompt(
-    "Seleccione la categoría del gasto:\n1 - Vivienda\n2 - Comida\n3 - Transporte\n4 - Ocio"
-  );
-  switch (categoria) {
-    case "1":
-      return vivienda;
-    case "2":
-      return comida;
-    case "3":
-      return transporte;
-    case "4":
-      return ocio;
-    default:
-      alert("Categoría inválida. Se asignará a 'Ocio' por defecto.");
-      return ocio;
-  }
-}
+    const categoriasValidas = ["vivienda", "comida", "transporte", "ocio"];
 
-// Función para agregar gasto
-function agregarGasto() {
-  const nombre = prompt("Ingrese el nombre del gasto:");
-  if (!nombre || nombre.trim() === "") {    
-    alert("❌ El nombre del gasto no puede estar vacío.");
-    return;
-  }
+    if (!nombre || isNaN(monto) || monto <= 0 || !categoriasValidas.includes(categoria)) {
+      alert("Complete todos los campos correctamente y seleccione una categoría válida.");
+      return;
+    }
 
-  const monto = pedirNumeroPositivo("Ingrese el monto del gasto:");
-  if (monto === null) {
-    alert("Operación cancelada. No se agregó el gasto.");
-    return;
-  }
+    const nuevoGasto = { nombre, monto, categoria };
+    gastos.push(nuevoGasto);
+    localStorage.setItem("gastos", JSON.stringify(gastos));
 
-  const categoriaArray = seleccionarCategoria();
-  categoriaArray.push({ nombre, monto });
-  console.log(`🧾 Gasto agregado: ${nombre} -> $${monto}`);
-}
+    nombreGasto.value = "";
+    montoGasto.value = "";
+    renderGastos();
+    actualizarTotales();
+    const montoTotal = parseFloat(montoGasto.value);
+    const categoriaTotal = categoriaGasto.value;
 
-// Función para calcular totales
-function calcularTotalesPorCategoria() {
-  function sumar(array) {
-    return array.reduce((acc, gasto) => acc + gasto.monto, 0);
-  }
+    if (!nombre || isNaN(montoTotal) || montoTotal <= 0) {
+      alert("Complete todos los campos correctamente.");
+      return;
+    }
 
-  const totalVivienda = sumar(vivienda);
-  const totalComida = sumar(comida);
-  const totalTransporte = sumar(transporte);
-  const totalOcio = sumar(ocio);
+    const nuevoGasto = { nombre, montoTotal, categoriaTotal };
+    gastos.push(nuevoGasto);
+    localStorage.setItem("gastos", JSON.stringify(gastos));
 
-  const totalGastos = totalVivienda + totalComida + totalTransporte + totalOcio;
-  const saldo = ingresosMensuales - totalGastos;
+    // limpiar inputs
+    nombreGasto.value = "";
+    montoGasto.value = "";
 
-  console.log("📊 Totales por categoría:");
-  console.log("🏠 Vivienda: $ " + totalVivienda);
-  console.log("🍽️ Comida: $" + totalComida);
-  console.log("🚗 Transporte: $" + totalTransporte);
-  console.log("🎉 Ocio: $" + totalOcio);
-  console.log("🧮 Total de gastos: $" + totalGastos);
-  console.log("💼 Saldo disponible: $" + saldo);
+    renderGastos();
+    actualizarTotales();
 
-  if (saldo < 0) {
-    alert("⚠️ ¡Cuidado! Has excedido tu presupuesto.\nSaldo negativo: $" + saldo);
-  } else if (saldo < ingresosMensuales * 0.2) {
-    alert("🔔 Advertencia: Tu saldo es inferior al 20% de tu ingreso mensual.\nSaldo restante: $" + saldo);
-  } else {
-    alert("✅ ¡Buen trabajo! Tu saldo es saludable.\nSaldo restante: $" + saldo);
-  }
-}
+    // ---------- funciones ----------
+    function renderGastos() {
+      // Limpia fallback list si existe
+      if (listaGastosFallback) listaGastosFallback.innerHTML = "";
 
-// Función principal que se ejecuta al presionar el botón
-function iniciarSimulador() {
-  console.clear();
-  ingresarIngresos();
+      // Si existen columnas por categoría, limpiarlas
+      document.querySelectorAll(".listaCategoria").forEach(div => {
+        if (div) div.innerHTML = "";
 
-  if (ingresosMensuales > 0) {
-    do {
-      agregarGasto();
-    } while (confirm("¿Desea agregar otro gasto?"));
+        // Totales por categoría
+        const categorias = ["vivienda", "comida", "transporte", "ocio"];
+        const totalesPorCat = categorias.reduce((acc, c) => { acc[c] = 0; return acc; }, {});
 
-    calcularTotalesPorCategoria();
-  }
-}
+        // Recorremos gastos por su índice global (para eliminar con índice seguro)
+        gastos.forEach((g, globalIndex) => {
+          // suma por categoría
+          if (totalesPorCat.hasOwnProperty(g.categoria)) totalesPorCat[g.categoria] += g.monto;
+
+          // Intentamos colocar en la columna correspondiente
+          const contenedorColumna = document.querySelector(`#col-${g.categoria.replace(/[^a-zA-Z0-9_-]/g, '')} .listaCategoria`);
+
+          // Si la columna existe (nuevo layout), agregamos ahí
+          if (contenedorColumna) {
+            const item = crearItemGasto(g, globalIndex);
+            contenedorColumna.appendChild(item);
+          } else if (listaGastosFallback) {
+            // Sino, agregamos al fallback (versión antigua)
+            const item = document.createElement("div");
+            item.textContent = `${g.nombre} - $${g.monto} (${g.categoria})`;
+            const btnEliminar = document.createElement("button");
+            btnEliminar.textContent = "❌";
+            btnEliminar.style.marginLeft = "10px";
+            btnEliminar.onclick = () => eliminarGasto(globalIndex);
+            item.appendChild(btnEliminar);
+            listaGastosFallback.appendChild(item);
+          }
+
+          // Actualizar totales por columna si existen elementos .totalCategoria
+          categorias.forEach(cat => {
+            const totalEl = document.querySelector(`#col-${cat} .totalCategoria`);
+            if (totalEl) totalEl.textContent = `Total: $${totalesPorCat[cat]}`;
+
+            // Si no hay columnas, actualizamos el texto general de totales en #totales (fallback)
+            if (!document.querySelector(`#col-vivienda .listaCategoria`) && totales) {
+              const totalGastos = gastos.reduce((a, b) => a + b.monto, 0);
+              const saldo = ingresos - totalGastos;
+              totales.textContent = `Ingresos: $${ingresos} | Gastos: $${totalGastos} | Saldo: $${saldo}`;
+            }
+          }
+
+  function crearItemGasto(gasto, globalIndex) {
+              const item = document.createElement("div");
+              const left = document.createElement("span");
+              left.textContent = `${gasto.nombre}`;
+              const right = document.createElement("span");
+              right.textContent = `$${gasto.monto}`;
+              right.style.marginLeft = "8px";
+              // boton eliminar
+              const btn = document.createElement("button");
+              btn.textContent = "❌";
+              btn.onclick = () => eliminarGasto(globalIndex);
+
+              // estructura flexible
+              item.style.display = "flex";
+              item.style.justifyContent = "space-between";
+              item.style.alignItems = "center";
+              item.appendChild(left);
+
+              const rightWrap = document.createElement("div");
+              rightWrap.style.display = "flex";
+              rightWrap.style.gap = "8px";
+              rightWrap.appendChild(right);
+              rightWrap.appendChild(btn);
+
+              item.appendChild(rightWrap);
+              return item;
+            }
+
+  function eliminarGasto(index) {
+              if (index < 0 || index >= gastos.length) return;
+              gastos.splice(index, 1);
+              localStorage.setItem("gastos", JSON.stringify(gastos));
+              renderGastos();
+              actualizarTotales();
+            }
+
+  function actualizarTotales() {
+              const totalGastos = gastos.reduce((acc, g) => acc + g.monto, 0);
+              const saldo = ingresos - totalGastos;
+
+              // Totales por categoría (para mostrar en el bloque general si hace falta)
+              const categorias = ["vivienda", "comida", "transporte", "ocio"];
+              const porCategoria = categorias.map(cat => {
+                const suma = gastos.filter(g => g.categoria === cat).reduce((a, b) => a + b.monto, 0);
+                return `${cat}: $${suma}`;
+              }).join(" | ");
+
+              if (totales) {
+                totales.textContent = `Ingresos: $${ingresos} | Gastos: $${totalGastos} | Saldo: $${saldo} | ${porCategoria}`;
+              }
+
+              if (saldo < 0) {
+                // aviso en consola (no spamear alerts)
+                console.warn("⚠️ Has excedido tu presupuesto.");
+              }
+            }
+              /* ==== BOTÓN LIMPIAR ==== */
+              .acciones {
+                text- align: center;
+          margin - top: 1.5rem;
+        }
+
+#limpiarTodo {
+          background- color: #e53935;
+        color: white;
+        border: none;
+        padding: 0.7rem 1.2rem;
+        border - radius: var(--radio);
+        font - size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+#limpiarTodo: hover {
+        background- color: #c62828;
+    }

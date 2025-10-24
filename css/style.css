@@ -1,0 +1,162 @@
+/* ==== ESTILOS GENERALES ==== */
+:root {
+  --color-principal: #2e8b57;
+  --color-secundario: #43a047;
+  --color-fondo: #f2f7f5;
+  --color-texto: #333;
+  --color-blanco: #fff;
+  --sombra: 0 4px 10px rgba(0, 0, 0, 0.1);
+  --radio: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-fondo);
+  margin: 0;
+  padding: 0;
+  color: var(--color-texto);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+  color: var(--color-blanco);
+  text-align: center;
+  padding: 2rem 1rem;
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  box-shadow: var(--sombra);
+}
+
+header h1 {
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+header p {
+  opacity: 0.9;
+}
+
+main {
+  flex: 1;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card {
+  background-color: var(--color-blanco);
+  padding: 1.5rem;
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+}
+
+h2 {
+  color: var(--color-principal);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* ==== FORMULARIOS ==== */
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+input, select, button {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: var(--radio);
+  font-size: 1rem;
+}
+
+input, select {
+  flex: 1;
+  min-width: 150px;
+}
+
+button {
+  background-color: var(--color-principal);
+  color: var(--color-blanco);
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--color-secundario);
+}
+
+/* ==== LISTA DE GASTOS ==== */
+#listaGastos div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #e8f5e9;
+  border-radius: var(--radio);
+  padding: 0.5rem 1rem;
+  margin: 0.3rem 0;
+}
+
+#listaGastos button {
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.3rem 0.6rem;
+}
+
+#listaGastos button:hover {
+  background: #c62828;
+}
+
+/* ==== TOTALES ==== */
+#totales {
+  margin-top: 1rem;
+  font-weight: bold;
+  text-align: center;
+  background: #f0fff0;
+  padding: 0.8rem;
+  border-radius: var(--radio);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ==== FOOTER ==== */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #e8f5e9;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 1.6rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  button, input, select {
+    font-size: 0.9rem;
+  }
+
+  #listaGastos div {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
