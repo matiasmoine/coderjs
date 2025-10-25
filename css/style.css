@@ -35,9 +35,7 @@ button {
   color: white;
   padding: 10px 20px;
   border: none;
-
-  /* Redondeo de bordes */
-  border-radius: 10px; /* Redondeo uniforme en todas las esquinas */
+  border-radius: 10px; 
   cursor: pointer;
 
 }

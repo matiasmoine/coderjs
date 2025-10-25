@@ -57,19 +57,19 @@ document.addEventListener("DOMContentLoaded", () => {
       gastosTable.appendChild(row);
     });
   }
-
+  function tomarIngreso(){
+    ingresos = parseFloat(ingresoInput.value) || 0;
+    localStorage.setItem("ingreso", ingresos);
+    actualizarResumen();
+  };
   window.eliminarGasto = function (index) {
     gastos.splice(index, 1);
     localStorage.setItem("gastos", JSON.stringify(gastos));
     renderGastos(categoriaFiltro.value);
     actualizarResumen();
   };
-
-  guardarIngresoBtn.addEventListener("click", () => {
-    ingresos = parseFloat(ingresoInput.value) || 0;
-    localStorage.setItem("ingreso", ingresos);
-    actualizarResumen();
-  });
+  ingresoInput.addEventListener("keydown", () => tomarIngreso());
+  guardarIngresoBtn.addEventListener("click", () => tomarIngreso());
 
   reiniciarIngresoBtn.addEventListener("click", () => {
     ingresos = 0;
