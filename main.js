@@ -8,11 +8,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoriaFiltro = document.getElementById("categoriaFiltro");
   const advertenciaDiv = document.getElementById("advertencia");
 
+  // ✅ Limpiar pantalla con confirmación
   document.getElementById("limpiarPantalla").addEventListener("click", () => {
-    localStorage.clear();
-    location.reload();
+    Swal.fire({
+      title: '¿Limpiar pantalla?',
+      text: 'Se eliminarán todos los datos y se recargará la página.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, limpiar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.clear();
+        location.reload();
+      }
+    });
   });
-
 
   let ingresos = parseFloat(localStorage.getItem("ingreso")) || 0;
   let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
@@ -28,9 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const saldoElemento = document.getElementById("saldoTotal");
     saldoElemento.textContent = saldo.toFixed(2);
 
-    console.log(saldoElemento.textContent);
-
-    // Aplicar estilo y advertencia si el saldo es negativo
     if (saldo < 0) {
       saldoElemento.classList.add("saldo-negativo");
       advertenciaDiv.textContent = "⚠️ ¡Advertencia! Sus gastos superaron sus ingresos.";
@@ -57,17 +67,35 @@ document.addEventListener("DOMContentLoaded", () => {
       gastosTable.appendChild(row);
     });
   }
-  function tomarIngreso(){
+
+  function tomarIngreso() {
     ingresos = parseFloat(ingresoInput.value) || 0;
     localStorage.setItem("ingreso", ingresos);
     actualizarResumen();
-  };
+  }
+
+  // ✅ Eliminar gasto con confirmación
   window.eliminarGasto = function (index) {
-    gastos.splice(index, 1);
-    localStorage.setItem("gastos", JSON.stringify(gastos));
-    renderGastos(categoriaFiltro.value);
-    actualizarResumen();
+    Swal.fire({
+      title: '¿Eliminar este gasto?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        gastos.splice(index, 1);
+        localStorage.setItem("gastos", JSON.stringify(gastos));
+        renderGastos(categoriaFiltro.value);
+        actualizarResumen();
+        Swal.fire('Eliminado', 'El gasto ha sido eliminado.', 'success');
+      }
+    });
   };
+
   ingresoInput.addEventListener("keydown", () => tomarIngreso());
   guardarIngresoBtn.addEventListener("click", () => tomarIngreso());
 
@@ -94,11 +122,26 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarResumen();
   });
 
+  // ✅ Borrar todos los gastos con confirmación
   borrarTodoBtn.addEventListener("click", () => {
-    gastos = [];
-    localStorage.removeItem("gastos");
-    renderGastos();
-    actualizarResumen();
+    Swal.fire({
+      title: '¿Eliminar todos los gastos?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, borrar todo',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        gastos = [];
+        localStorage.removeItem("gastos");
+        renderGastos();
+        actualizarResumen();
+        Swal.fire('Borrado', 'Todos los gastos han sido eliminados.', 'success');
+      }
+    });
   });
 
   categoriaFiltro.addEventListener("change", () => {
