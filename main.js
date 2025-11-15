@@ -8,7 +8,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoriaFiltro = document.getElementById("categoriaFiltro");
   const advertenciaDiv = document.getElementById("advertencia");
 
-  // ✅ Limpiar pantalla con confirmación
+   async function mostrarCotizacionDolar() {
+    try {
+      const response = await fetch('https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones');
+      const data = await response.json();
+
+      if (data.status === 200 && data.results && data.results.detalle) {
+        const dolar = data.results.detalle.find(item => item.codigoMoneda === "USD");
+        if (dolar) {
+          document.getElementById("cotizacionDolar").textContent = `USD: $${dolar.tipoCotizacion.toFixed(2)}`;
+          document.getElementById("fechaCotizacion").textContent = `Fecha: ${data.results.fecha}`;
+        } else {
+          document.getElementById("cotizacionDolar").textContent = "Cotización no disponible";
+          document.getElementById("fechaCotizacion").textContent = "";
+        }
+      } else {
+        document.getElementById("cotizacionDolar").textContent = "Error al obtener cotización";
+        document.getElementById("fechaCotizacion").textContent = "";
+      }
+    } catch (error) {
+      console.error("Error al consultar la API:", error);
+      document.getElementById("cotizacionDolar").textContent = "Error de conexión";
+      document.getElementById("fechaCotizacion").textContent = "";
+    }
+  }
+  mostrarCotizacionDolar();
+
   document.getElementById("limpiarPantalla").addEventListener("click", () => {
     Swal.fire({
       title: '¿Limpiar pantalla?',
