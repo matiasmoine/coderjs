@@ -8,10 +8,43 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoriaFiltro = document.getElementById("categoriaFiltro");
   const advertenciaDiv = document.getElementById("advertencia");
 
-   async function mostrarCotizacionDolar() {
+  //  async function mostrarCotizacionDolar() {
+  //   try {
+  //     const response = await fetch('https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones');
+  //     const data = await response.json();
+
+  //     if (data.status === 200 && data.results && data.results.detalle) {
+  //       const dolar = data.results.detalle.find(item => item.codigoMoneda === "USD");
+  //       if (dolar) {
+  //         document.getElementById("cotizacionDolar").textContent = `USD: $${dolar.tipoCotizacion.toFixed(2)}`;
+  //         document.getElementById("fechaCotizacion").textContent = `Fecha: ${data.results.fecha}`;
+  //       } else {
+  //         document.getElementById("cotizacionDolar").textContent = "Cotización no disponible";
+  //         document.getElementById("fechaCotizacion").textContent = "";
+  //       }
+  //     } else {
+  //       document.getElementById("cotizacionDolar").textContent = "Error al obtener cotización";
+  //       document.getElementById("fechaCotizacion").textContent = "";
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al consultar la API:", error);
+  //     document.getElementById("cotizacionDolar").textContent = "Error de conexión";
+  //     document.getElementById("fechaCotizacion").textContent = "";
+  //   }
+  // }
+  async function mostrarCotizacionDolar() {
     try {
-      const response = await fetch('https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones');
-      const data = await response.json();
+      const hoy = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+      let url = `https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones?fecha=${hoy}`;
+      let response = await fetch(url);
+      let data = await response.json();
+
+      // Si no hay datos para hoy, hacemos fallback a la última cotización disponible
+      if (!(data.status === 200 && data.results && data.results.detalle && data.results.detalle.length > 0)) {
+        console.warn("No hay datos para la fecha actual, usando última cotización disponible...");
+        response = await fetch('https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones');
+        data = await response.json();
+      }
 
       if (data.status === 200 && data.results && data.results.detalle) {
         const dolar = data.results.detalle.find(item => item.codigoMoneda === "USD");
