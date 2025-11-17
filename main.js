@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let response = await fetch(url);
       let data = await response.json();
 
-      // Si no hay datos para hoy, hacemos fallback a la última cotización disponible
+      // Si no hay datos para hoy, busco la última cotización disponible
       if (!(data.status === 200 && data.results && data.results.detalle && data.results.detalle.length > 0)) {
         console.warn("No hay datos para la fecha actual, usando última cotización disponible...");
         response = await fetch('https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones');
